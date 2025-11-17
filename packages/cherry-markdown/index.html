@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cherry Editor - Markdown Editor</title>
+    <style>
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        overflow: hidden;
+      }
+
+      video {
+        max-width: 400px;
+      }
+
+      #demo-val {
+        display: none;
+      }
+
+      img {
+        max-width: 100%;
+      }
+      iframe.cherry-dialog-iframe {
+        width: 100%;
+        height: 100%;
+      }
+    </style>
+    <link rel="Shortcut Icon" href="./logo/favicon.ico" />
+    <link rel="Shortcut Icon" href="/logo/favicon.ico" />
+    <link rel="Bookmark" href="/logo/favicon.ico" />
+  </head>
+
+  <body>
+    <div id="markdown"></div>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts@5.4.0/dist/echarts.min.js"></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.js"
+      integrity="sha384-g7c+Jr9ZivxKLnZTDUhnkOnsh30B4H0rpLUpJ4jAIKs4fnJI+sEnkvrMWph2EDg4"
+      crossorigin="anonymous"
+    ></script>
+
+    <script type="module">
+      import './src/sass/index.scss';
+      import Cherry from './src/index.js';
+      window.Cherry = Cherry;
+
+      import indexMd from '@examples/assets/markdown/index.md?raw';
+      import imgMd from '@examples/assets/markdown/img.md?raw';
+      import tableMd from '@examples/assets/markdown/table.md?raw';
+      import headAutoNumMd from '@examples/assets/markdown/head-auto-num.md?raw';
+
+      import { basicConfig } from '@examples/assets/scripts/index-demo.js';
+      import { h5Config } from '@examples/assets/scripts/h5-demo.js';
+      import { multipleCherryConfig1, multipleCherryConfig2 } from '@examples/assets/scripts/multiple-demo.js';
+      import { noToolbarConfig } from '@examples/assets/scripts/notoolbar-demo.js';
+      import { previewConfig } from '@examples/assets/scripts/preview-demo.js';
+      import { imgConfig } from '@examples/assets/scripts/img-demo.js';
+      // import { aiChatScenario } from '../../examples/assets/scripts/ai-chat-demo.js';
+
+      const devCompatibleConfig = {
+        callback: {
+          urlProcessor: (url, type) => {
+            // 兼容本地文件加载
+            console.log('加载图片', '/@fs/' + __EXAMPLES_PATH__ + '/' + url);
+            return '/@fs/' + __EXAMPLES_PATH__ + '/' + url;
+          },
+        },
+      };
+
+      let CONFIG = '';
+
+      switch (window.location.pathname) {
+        case '/':
+          CONFIG = Object.assign({}, basicConfig, { value: indexMd, ...devCompatibleConfig });
+          break;
+        case '/h5.html':
+          CONFIG = Object.assign({}, h5Config, { value: indexMd, ...devCompatibleConfig });
+          break;
+        case '/multiple.html':
+          CONFIG = Object.assign({}, multipleCherryConfig1, { value: indexMd, ...devCompatibleConfig });
+
+          const CONFIG2 = Object.assign({}, multipleCherryConfig2, { value: indexMd, ...devCompatibleConfig });
+          window.cherry = new Cherry(CONFIG2);
+          break;
+        case '/notoolbar.html':
+          CONFIG = Object.assign({}, noToolbarConfig, { value: indexMd, ...devCompatibleConfig });
+          break;
+        case '/preview_only.html':
+          CONFIG = Object.assign({}, previewConfig, { value: indexMd, ...devCompatibleConfig });
+          break;
+        case '/xss.html':
+          CONFIG = {
+            id: 'markdown',
+            engine: {
+              global: {
+                htmlWhiteList: 'iframe|script|style',
+              },
+            },
+            value: indexMd,
+          };
+          break;
+        case '/img.html':
+          CONFIG = Object.assign({}, imgConfig, { value: imgMd, ...devCompatibleConfig });
+          break;
+        case '/table.html':
+          CONFIG = {
+            id: 'markdown',
+            toolbars: {
+              toolbar: ['bold', 'italic', 'strikethrough', '|', 'header', 'list', 'graph'],
+            },
+            editor: {
+              height: '70%',
+            },
+            value: tableMd,
+          };
+          break;
+        case '/head_num.html':
+          CONFIG = {
+            id: 'markdown',
+            engine: {
+              syntax: {
+                header: {
+                  anchorStyle: 'autonumber',
+                },
+                toc: {
+                  showAutoNumber: true,
+                },
+              },
+            },
+            toolbars: {
+              showAutoNumber: true,
+            },
+            value: headAutoNumMd,
+          };
+          break;
+        case '/ai_chat.html':
+          // document.addEventListener('DOMContentLoaded', function () {
+          //   aiChatScenario();
+          // });
+          break;
+        case '/vim.html':
+          // CONFIG = '';
+          break;
+        case '/mermaid.html':
+          // CONFIG = '';
+          break;
+        default:
+          CONFIG = Object.assign({}, basicConfig, { value: indexMd });
+      }
+
+      if (window.location.pathname !== '/ai-chat-scenario') {
+        window.cherry = new Cherry(CONFIG);
+      }
+
+      import '@examples/assets/scripts/pinyin/pinyin_dist.js';
+    </script>
+  </body>
+</html>

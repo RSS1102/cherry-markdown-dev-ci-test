@@ -1,0 +1,5 @@
+@use 'sass:meta';
+
+@include meta.load-css('codemirror/lib/codemirror.css');
+
+@import './cherry.scss';

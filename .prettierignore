@@ -1,0 +1,6 @@
+# build/**
+dist/**
+node_modules/**
+src/libs/*.js
+examples/markdown/**
+packages/cherry-markdown/src/libs/*
